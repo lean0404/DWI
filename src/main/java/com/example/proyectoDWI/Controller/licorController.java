@@ -29,4 +29,14 @@ public class licorController {
         licor.add(nombre);
         return "Licor agregado: " + nombre;
     }
+
+    /*eliminar licor*/
+    @DeleteMapping("{/nombre}")
+    public String deleteLicor (@PathVariable String nombre){
+        if (licor.contains(nombre)){
+            licor.remove(nombre);
+            return "Licor eliminado: " +nombre;
+        }
+        return "Licor no encontrado ";
+    }
 }
