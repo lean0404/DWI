@@ -1,9 +1,7 @@
 package com.example.proyectoDWI.Controller;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,5 +21,12 @@ public class licorController {
     @GetMapping
     public List<String> getAllLicor(){
         return licor;
+    }
+
+    /*agregar licor*/
+    @PostMapping ("/{nombre}")
+    public String addLicor (@PathVariable String nombre){
+        licor.add(nombre);
+        return "Licor agregado: " + nombre;
     }
 }
