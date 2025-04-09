@@ -1,42 +1,36 @@
 package com.example.proyectoDWI.Controller;
 
-
+import com.example.proyectoDWI.Model.Licor;
+import com.example.proyectoDWI.Service.LicorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping ("/licores")
-
+@RequestMapping("/licores")
 public class licorController {
-    private List<String> licor= new ArrayList<>();
-    /*servicio*/
 
-    public licorController(){
-        licor.add("Smirnoff");
-        licor.add("Rus Kalla");
-    }
+    @Autowired
+    private LicorService licorService;
 
     @GetMapping
-    public List<String> getAllLicor(){
-        return licor;
+    public List<Licor> getAllLicor() {
+        return licorService.getAllLicores();
     }
 
-    /*agregar licor*/
-    @PostMapping ("/{nombre}")
-    public String addLicor (@PathVariable String nombre){
-        licor.add(nombre);
-        return "Licor agregado: " + nombre;
+    @PostMapping
+    public String addLicor(@RequestBody Licor nuevoLicor) {
+        return licorService.addLicor(nuevoLicor);
     }
 
-    /*eliminar licor*/
-    @DeleteMapping("{/nombre}")
-    public String deleteLicor (@PathVariable String nombre){
-        if (licor.contains(nombre)){
-            licor.remove(nombre);
-            return "Licor eliminado: " +nombre;
-        }
-        return "Licor no encontrado ";
+    @DeleteMapping("/{nombre}")
+    public String deleteLicor(@PathVariable String nombre) {
+        return licorService.deleteLicor(nombre);
+    }
+
+    @PutMapping("/{nombre}")
+    public String updateLicor(@PathVariable String nombre, @RequestBody Licor licorActualizado) {
+        return licorService.updateLicor(nombre, licorActualizado);
     }
 }
