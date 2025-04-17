@@ -5,44 +5,45 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LicorService {
 
-    private List<Licor> licorList = new ArrayList<>();
+    private List<Licor> listaLicores = new ArrayList<>();
+    private Long nextId = 1L;
 
-    public LicorService() {
-        licorList.add(new Licor("Smirnoff", 25.5, 100));
-        licorList.add(new Licor("Rus Kalla", 18.0, 50));
+    public List<Licor> obtenerTodos() {
+        return listaLicores;
     }
 
-    public List<Licor> getAllLicores() {
-        return licorList;
+    public Optional<Licor> obtenerPorId(Long id) {
+        return listaLicores.stream().filter(l -> l.getId().equals(id)).findFirst();
     }
 
-    public String addLicor(Licor nuevoLicor) {
-        licorList.add(nuevoLicor);
-        return "Licor agregado: " + nuevoLicor.getNombre();
+    public List<Licor> obtenerPorTipo(String tipo) {
+        return listaLicores.stream()
+                .filter(l -> l.getTipo().toLowerCase().contains(tipo.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
-    public String deleteLicor(String nombre) {
-        for (Licor licor : licorList) {
-            if (licor.getNombre().equalsIgnoreCase(nombre)) {
-                licorList.remove(licor);
-                return "Licor eliminado: " + nombre;
-            }
-        }
-        return "Licor no encontrado";
+    public Licor guardar(Licor licor) {
+        licor.setId(nextId++);
+        listaLicores.add(licor);
+        return licor;
     }
 
-    public String updateLicor(String nombre, Licor licorActualizado) {
-        for (Licor licor : licorList) {
-            if (licor.getNombre().equalsIgnoreCase(nombre)) {
-                licor.setPrecio(licorActualizado.getPrecio());
-                licor.setStock(licorActualizado.getStock());
-                return "Licor actualizado: " + nombre;
-            }
-        }
-        return "Licor no encontrado";
+    public boolean eliminar(Long id) {
+        return listaLicores.removeIf(l -> l.getId().equals(id));
+    }
+
+    public void actualizar(Long id, Licor licorActualizado) {
+        obtenerPorId(id).ifPresent(licor -> {
+            licor.setNombre(licorActualizado.getNombre());
+            licor.setTipo(licorActualizado.getTipo());
+            licor.setPrecio(licorActualizado.getPrecio());
+            licor.setStock(licorActualizado.getStock());
+        });
     }
 }

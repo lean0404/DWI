@@ -1,50 +1,66 @@
 package com.example.proyectoDWI.Service;
 
-
 import com.example.proyectoDWI.Model.Cigarros;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CigarrosService {
 
-    private static List <Cigarros> CigarrosList = new ArrayList<>();
+    private List<Cigarros> listaCigarros = new ArrayList<>();
+    private Long contadorId = 1L;
 
-    public CigarrosService(){
-        CigarrosList.add(new Cigarros("Laki","uva",11.5,15));
+    public List<Cigarros> obtenerTodos() {
+        return listaCigarros;
     }
 
-    public static List<Cigarros> getAllCigarros(){
-        return CigarrosList;
+    public Optional<Cigarros> obtenerPorId(Long id) {
+        return listaCigarros.stream()
+                .filter(cigarro -> cigarro.getId().equals(id))
+                .findFirst();
     }
 
-    public static String addCigarros(Cigarros nuevocigarro){
-        CigarrosList.add(nuevocigarro);
-        return "Cigarro agregado: " +nuevocigarro.getNombre();
+    public Cigarros crearCigarro(Cigarros cigarro) {
+        cigarro.setId(contadorId++);
+        listaCigarros.add(cigarro);
+        return cigarro;
     }
 
-    public static String deteleCigarros(String nombre){
-        for (Cigarros cigarro: CigarrosList){
-            if (cigarro.getNombre().equalsIgnoreCase(nombre)){
-                CigarrosList.remove(cigarro);
-                return "Cigarro eliminado " + nombre;
+    public boolean actualizarCigarro(Long id, Cigarros nuevoCigarro) {
+        for (int i = 0; i < listaCigarros.size(); i++) {
+            if (listaCigarros.get(i).getId().equals(id)) {
+                nuevoCigarro.setId(id);
+                listaCigarros.set(i, nuevoCigarro);
+                return true;
             }
         }
-        return "Cigarro no encontrado ";
+        return false;
     }
 
-
-    public static String updateCigarro(String nombre, Cigarros CigarroActualizado){
-        for (Cigarros cigarros : CigarrosList){
-            if (cigarros.getNombre().equalsIgnoreCase(nombre)){
-                cigarros.setPrecio(CigarroActualizado.getPrecio());
-                cigarros.setStock(CigarroActualizado.getStock());
-                return "Cigarro actualizado : " + nombre;
+    public boolean actualizarParcialmente(Long id, Cigarros parcial) {
+        for (Cigarros cigarro : listaCigarros) {
+            if (cigarro.getId().equals(id)) {
+                if (parcial.getNombre() != null) cigarro.setNombre(parcial.getNombre());
+                if (parcial.getSabor() != null) cigarro.setSabor(parcial.getSabor());
+                if (parcial.getPrecio() != 0) cigarro.setPrecio(parcial.getPrecio());
+                if (parcial.getStock() != 0) cigarro.setStock(parcial.getStock());
+                return true;
             }
         }
-        return "Cigarro no encontrado ";
+        return false;
+    }
+
+    public boolean eliminarCigarro(Long id) {
+        return listaCigarros.removeIf(cigarro -> cigarro.getId().equals(id));
+    }
+
+    public Optional<Cigarros> buscarPorNombre(String nombre) {
+        return listaCigarros.stream()
+                .filter(c -> c.getNombre().equalsIgnoreCase(nombre))
+                .findFirst();
     }
 
 }
