@@ -17,6 +17,14 @@ public class Cigarros {
         this.id = id;
     }
 
+    public Cigarros(String sabor, String marca, double precio, int stock) {
+        this.sabor = sabor;
+        this.marca = marca;
+        this.precio = precio;
+        this.stock = stock;
+
+    }
+
     public String getSabor() {
         return sabor;
     }

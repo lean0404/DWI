@@ -17,6 +17,13 @@ public class Licor {
         this.precio = precio;
         this.stock = stock;
     }
+    // Constructor sin el id (para los casos donde el id se asigna automáticamente)
+    public Licor(String nombre, String tipo, double precio, int stock) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.precio = precio;
+        this.stock = stock;
+    }
 
     public Long getId() { return id; }
 
