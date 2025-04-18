@@ -2,27 +2,19 @@ package com.example.proyectoDWI.Model;
 
 public class Cigarros {
     private Long id;
-    private String nombre;
     private String sabor;
+    private String marca;
     private double precio;
     private int stock;
 
-    public Cigarros(){}
+    public Cigarros() {}
 
-    public Cigarros(String nombre,String sabor, double precio, int stock, long id) {
-        this.nombre = nombre;
-        this.sabor= sabor;
+    public Cigarros(String sabor, String marca, double precio, int stock, long id) {
+        this.sabor = sabor;
+        this.marca = marca;
         this.precio = precio;
         this.stock = stock;
-        this.id=id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.id = id;
     }
 
     public String getSabor() {
@@ -31,6 +23,14 @@ public class Cigarros {
 
     public void setSabor(String sabor) {
         this.sabor = sabor;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
     }
 
     public double getPrecio() {
