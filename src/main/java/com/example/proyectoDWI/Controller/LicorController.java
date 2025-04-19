@@ -23,38 +23,44 @@ public class LicorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Licor> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         return licorService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(404).body("Producto no encontrado"));
     }
 
+
     @GetMapping("/buscar/{tipo}")
-    public List<Licor> obtenerPorTipo(@PathVariable String tipo) {
-        return licorService.obtenerPorTipo(tipo);
+    public ResponseEntity<?> obtenerPorTipo(@PathVariable String tipo) {
+        List<Licor> encontrados = licorService.obtenerPorTipo(tipo);
+        if (encontrados.isEmpty()) {
+            return ResponseEntity.status(404).body("No se encontraron productos del tipo: " + tipo);
+        }
+        return ResponseEntity.ok(encontrados);
     }
 
     @PostMapping
-    public Licor crear(@RequestBody Licor licor) {
-        return licorService.guardar(licor);
+    public ResponseEntity<String> crear(@RequestBody Licor licor) {
+        licorService.guardar(licor);
+        return ResponseEntity.ok("Producto añadido correctamente: " + licor.getNombre());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody Licor licor) {
+    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Licor licor) {
         if (licorService.obtenerPorId(id).isPresent()) {
             licorService.actualizar(id, licor);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Producto actualizado correctamente");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body("Producto no encontrado para actualizar");
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
         if (licorService.eliminar(id)) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Producto eliminado correctamente");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body("Producto no encontrado para eliminar");
         }
     }
 }

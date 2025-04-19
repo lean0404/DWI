@@ -18,43 +18,52 @@ public class CigarrosController {
     }
 
     @GetMapping
-    public List<Cigarros> listarTodos() {
-        return cigarrosService.obtenerTodos();
+    public ResponseEntity<?> listarTodos() {
+        List<Cigarros> lista = cigarrosService.obtenerTodos();
+        if (lista.isEmpty()) {
+            return ResponseEntity.status(404).body("No se encontraron cigarros en el sistema");
+        }
+        return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cigarros> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         return cigarrosService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(404).body("Cigarro no encontrado con ID: " + id));
     }
 
     @GetMapping("/buscar/{sabor}")
-    public List<Cigarros> obtenerPorSabor(@PathVariable String sabor) {
-        return cigarrosService.obtenerPorSabor(sabor);
+    public ResponseEntity<?> obtenerPorSabor(@PathVariable String sabor) {
+        List<Cigarros> resultados = cigarrosService.obtenerPorSabor(sabor);
+        if (resultados.isEmpty()) {
+            return ResponseEntity.status(404).body("No se encontraron cigarros con sabor: " + sabor);
+        }
+        return ResponseEntity.ok(resultados);
     }
 
     @PostMapping
-    public Cigarros crear(@RequestBody Cigarros cigarro) {
-        return cigarrosService.guardar(cigarro);
+    public ResponseEntity<String> crear(@RequestBody Cigarros cigarro) {
+        cigarrosService.guardar(cigarro);
+        return ResponseEntity.ok("Cigarro añadido correctamente: " +cigarro.getMarca());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizar(@PathVariable Long id, @RequestBody Cigarros cigarro) {
+    public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody Cigarros cigarro) {
         if (cigarrosService.obtenerPorId(id).isPresent()) {
             cigarrosService.actualizar(id, cigarro);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Cigarro actualizado correctamente " );
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body("No se encontró el cigarro con ID: " + id);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
         if (cigarrosService.eliminar(id)) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Cigarro eliminado correctamente");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body("No se encontró el cigarro con ID: " + id);
         }
     }
 }
